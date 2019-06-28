@@ -1,0 +1,85 @@
+Skip to content
+ 
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@inin19 
+1
+0 0 inin19/socketio
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Security  Insights  Settings
+socketio/.gitignore
+ u1118608 1st commit
+933390e on Mar 10
+We found potential security vulnerabilities in your dependencies.
+Only the owner of this repository can see this message. 
+Manage your notification settings or learn more about security alerts.
+
+52 lines (41 sloc)  659 Bytes
+    
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+*/dist
+*/tmp
+*/out-tsc
+# Only exists if Bazel was run
+/bazel-out
+
+# dependencies
+/node_modules
+
+# profiling files
+chrome-profiler-events.json
+speed-measure-plugin.json
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+
+*/node_modules/
+.vscode
+
+© 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
