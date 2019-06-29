@@ -38,5 +38,5 @@ app.use((err, req, res, next) => {
 
 
 app.listen(port, () => {
-  // console.log(`node is running on port ${port}`);
+  logger.info(`NodeJS is running on port ${port}`);
 });
