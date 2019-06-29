@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/inin19/playbook1_backend#readme",
   "dependencies": {
+    "app-root-path": "^2.2.1",
     "compression": "^1.7.4",
+    "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "morgan": "^1.9.1",
     "rotating-file-stream": "^1.4.2",

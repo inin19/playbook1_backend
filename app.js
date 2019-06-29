@@ -1,37 +1,40 @@
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
-const rfs = require('rotating-file-stream');
+const dotenv = require('dotenv');
 
 // const compresssion = require('compression');
 
+process.env.ENV = process.argv[2] || 'dev';
+
+const logger = require('./config/winston');
+
+dotenv.config({ path: path.resolve(process.cwd(), `${process.env.ENV}.env`) });
+
 const port = 3100;
-
-
 const app = express();
 
+app.use(morgan('tiny', { stream: logger.stream }));
 
-const logDirectory = path.join(__dirname, 'log');
-
-// ensure log directory exists
-// eslint-disable-next-line no-unused-expressions
-fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
-
-
-// create a rotating write stream
-const accessLogStream = rfs('access.log', {
-  interval: '1d', // rotate daily
-  path: logDirectory,
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
 
-// // create a write stream (in append mode)
-// const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 
-app.use(morgan('tiny', { stream: accessLogStream }));
-// app.use(compresssion);
+app.use((err, req, res, next) => {
+  res.locals.message = err.message;
+  // res.locals.error = req.app.get('env') === 'dev' ? err : {};
 
-app.get('/', (req, res) => res.send('Hello World!'));
+
+  // add this line to include winston logging
+  logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
 
 app.listen(port, () => {
