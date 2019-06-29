@@ -74,6 +74,7 @@ Thumbs.db
 # Log files
 
 *.log
+/log
 
 © 2019 GitHub, Inc.
 Terms
