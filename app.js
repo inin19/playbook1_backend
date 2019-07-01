@@ -4,6 +4,9 @@ const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
+const redis = require('redis');
+const { promisify } = require('util');
+const retryStrategy = require('./config/redisRetry');
 
 // const compresssion = require('compression');
 
@@ -15,6 +18,23 @@ dotenv.config({ path: path.resolve(process.cwd(), `${process.env.ENV}.env`) });
 
 const port = 3100;
 const app = express();
+
+
+const client = redis.createClient({
+  port: parseInt(process.env.REDIS_PORT, 10),
+  host: process.env.REDIS_HOST,
+  retry_strategy: retryStrategy,
+});
+
+client.on('ready', () => {
+  logger.info('Redis ready');
+});
+
+
+client.on('error', (err) => {
+  logger.error('Redis connection failed');
+});
+
 
 app.use(morgan('tiny', { stream: logger.stream }));
 
@@ -38,5 +58,5 @@ app.use((err, req, res, next) => {
 
 
 app.listen(port, () => {
-  logger.info(`NodeJS is running on port ${port}`);
+  logger.info(`NodeJS is running on port ${port} in ${process.env.ENV} mode`);
 });
