@@ -72,9 +72,12 @@ Thumbs.db
 .vscode
 
 # Log files
-
 *.log
 /logs
+
+# build files
+/public
+
 
 © 2019 GitHub, Inc.
 Terms
