@@ -1,11 +1,15 @@
 /* eslint-disable no-unused-vars */
 const express = require('express');
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+
 const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const redis = require('redis');
 const compresssion = require('compression');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 
 const cluster = require('cluster');
@@ -16,7 +20,6 @@ const logger = require('./config/winston');
 
 const workers = [];
 
-// Setup number of worker processes to share port which will be defined while setting up server
 
 const setupWorkerProcesses = () => {
   const numCores = numCPUs;
@@ -80,18 +83,25 @@ const setUpExpress = () => {
   dotenv.config({ path: path.resolve(process.cwd(), `${process.env.ENV}.env`) });
 
 
-  const client = redis.createClient({
+  const redisClient = redis.createClient({
     port: parseInt(process.env.REDIS_PORT, 10),
     host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD,
     retry_strategy: retryStrategy,
   });
 
-  client.on('ready', () => {
+
+  redisClient.select(3, () => {
+    logger.info('db 3 selected');
+  });
+
+
+  redisClient.on('ready', () => {
     logger.info('Redis ready');
   });
 
 
-  client.on('error', (err) => {
+  redisClient.on('error', (err) => {
     logger.error('Redis connection failed');
   });
 
@@ -103,6 +113,27 @@ const setUpExpress = () => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use(cookieParser());
+
+  app.use(session({
+    secret: 'my_secret',
+    store: new RedisStore({
+      client: redisClient,
+      ttl: process.env.SESSION_TIMEOUT,
+    }),
+    // proxy: true,
+    resave: false,
+    saveUninitialized: false,
+    // secure: true,
+    // httpOnly: true,
+  }));
+
+
+  app.use((req, res, next) => {
+    req.session.userID = 'yingying';
+    next();
+  });
+
 
   app.get('/api', (req, res) => {
     res.json({ name: 'yingying' });
