@@ -9,7 +9,9 @@ const dotenv = require('dotenv');
 const redis = require('redis');
 const compresssion = require('compression');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+
+const mongoose = require('mongoose');
+const passport = require('passport');
 
 
 const cluster = require('cluster');
@@ -92,12 +94,12 @@ const setUpExpress = () => {
 
 
   redisClient.select(3, () => {
-    logger.info('db 3 selected');
+    // logger.info(`process ${process.pid} is connected to db3`);
   });
 
 
   redisClient.on('ready', () => {
-    logger.info('Redis ready');
+    logger.info(`Redis is ready process ${process.pid} is connected to db3`);
   });
 
 
@@ -113,7 +115,6 @@ const setUpExpress = () => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(express.static(path.join(__dirname, 'public')));
-  app.use(cookieParser());
 
   app.use(session({
     secret: 'my_secret',
@@ -129,10 +130,10 @@ const setUpExpress = () => {
   }));
 
 
-  app.use((req, res, next) => {
-    req.session.userID = 'yingying';
-    next();
-  });
+  // app.use((req, res, next) => {
+  //   req.session.userID = 'yingying';
+  //   next();
+  // });
 
 
   app.get('/api', (req, res) => {
